@@ -2,6 +2,7 @@
 
 import { createTurkishSentese } from "./genkit";
 import { useState } from "react";
+import TextInput from "@/common/TextInput";
 
 export default function Home() {
   const [sentese, setSentese] = useState<string>("");
@@ -15,16 +16,21 @@ export default function Home() {
   return (
     <main>
       <form action={createSentese}>
-        <label htmlFor="word">
-          Suggest a menu item for a restaurant with this word:{" "}
-        </label>
-        <input type="text" name="word" id="word" />
-        <br />
-        <br />
-        <button type="submit">Generate</button>
+        <div className="container h-dvh mx-auto flex flex-col justify-center items-center">
+          <h3 className="mb-10 text-3xl">
+            Bir kelime giriniz ve AI sizin icin cumle kursun
+          </h3>
+          <TextInput />
+          <button className="rounded-lg bg-[#222] hover:bg-[#333] px-4 py-2 mt-5">
+            Cumle Kur
+          </button>
+          {!!sentese ? (
+            <pre className="border border-[#222] hover:border-[#333] rounded-xl mt-10 w-[500px] min-h-[200px] text-wrap p-3">
+              {sentese}
+            </pre>
+          ) : null}
+        </div>
       </form>
-      <br />
-      <pre>{sentese}</pre>
     </main>
   );
 }
