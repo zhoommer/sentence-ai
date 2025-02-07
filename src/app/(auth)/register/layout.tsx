@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function LoginLayout({
+export default function RegisterLayout({
   children,
 }: {
   children: React.ReactNode;
