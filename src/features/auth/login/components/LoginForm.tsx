@@ -31,7 +31,7 @@ const LoginForm = () => {
       setLoading(true);
       await loginWithGoogle(formData.remember);
       router.refresh();
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       setError("Google ile giriş başarısız oldu");
     } finally {
@@ -47,7 +47,7 @@ const LoginForm = () => {
     try {
       await loginWithEmail(formData.email, formData.password, formData.remember);
       router.refresh();
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       switch (error.code) {
         case "auth/invalid-email":

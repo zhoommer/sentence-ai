@@ -33,7 +33,7 @@ const RegisterForm = () => {
       setLoading(true);
       await registerWithGoogle();
       router.refresh();
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       setError("Google ile kayıt başarısız oldu");
     } finally {
@@ -65,10 +65,16 @@ const RegisterForm = () => {
       return;
     }
 
+    if (!formData.name.trim()) {
+      setError("Ad Soyad alanı zorunludur");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await registerWithEmail(formData.email, formData.password);
+      await registerWithEmail(formData.email, formData.password, formData.name);
       router.refresh();
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       switch (error.code) {
         case "auth/email-already-in-use":

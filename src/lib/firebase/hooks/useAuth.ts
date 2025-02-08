@@ -18,6 +18,7 @@ export const useAuth = () => {
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     } catch (error) {
       console.error("Çıkış yapılırken hata oluştu:", error);
     }

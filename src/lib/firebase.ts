@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, enableMultiTabIndexedDbPersistence, connectFirestoreEmulator, type Firestore } from "firebase/firestore";
+
+console.log("Environment Variables:", {
+  NODE_ENV: process.env.NODE_ENV,
+  USE_FIREBASE_EMULATOR: process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR,
+  FIREBASE_AUTH_EMULATOR_HOST: process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST,
+  FIREBASE_FIRESTORE_EMULATOR_HOST: process.env.NEXT_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST
+});
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -10,5 +18,52 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+console.log("Firebase Config:", {
+  ...firebaseConfig,
+  apiKey: firebaseConfig.apiKey?.slice(0, 5) + "..." // API anahtarını gizle
+});
+
+// Firebase app'i başlat
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app); 
+
+// Auth ve Firestore servislerini başlat
+const auth = getAuth();
+const db = getFirestore();
+
+// Geliştirme ortamında emülatörleri kullan
+if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
+  try {
+    // Auth emülatörünü bağla
+    connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
+    console.log("Firebase Auth emülatörü bağlandı: localhost:9099");
+
+    // Firestore emülatörünü bağla
+    connectFirestoreEmulator(db, "localhost", 8081);
+    console.log("Firebase Firestore emülatörü bağlandı: localhost:8081");
+  } catch (err) {
+    console.error("Firebase emülatör bağlantı hatası:", err);
+  }
+} else {
+  console.log("Firebase emülatörleri devre dışı, production ortamına bağlanılıyor");
+}
+
+// Çevrimdışı desteğini etkinleştir
+if (process.env.NODE_ENV === "production") {
+  try {
+    enableMultiTabIndexedDbPersistence(db).then(() => {
+      console.log("Çevrimdışı depolama etkinleştirildi");
+    }).catch((err: any) => {
+      if (err.code === 'failed-precondition') {
+        console.warn("Çoklu sekme açık olduğu için çevrimdışı depolama etkinleştirilemedi");
+      } else if (err.code === 'unimplemented') {
+        console.warn("Tarayıcınız çevrimdışı depolamayı desteklemiyor");
+      } else {
+        console.error("Çevrimdışı depolama hatası:", err);
+      }
+    });
+  } catch (err) {
+    console.error("Çevrimdışı depolama başlatma hatası:", err);
+  }
+}
+
+export { auth, db }; 

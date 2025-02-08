@@ -1,32 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { AiOutlineUser, AiOutlineLogout, AiOutlineBook } from "react-icons/ai";
-import { useAuth } from "@/lib/firebase/hooks/useAuth";
+import { AiOutlineUser, AiOutlineLogout, AiOutlineBook, AiOutlineDashboard } from "react-icons/ai";
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useState, useEffect } from "react";
-import Image from "next/image";
+import { Fragment } from "react";
+import { useNavbar } from "../hooks/useNavbar";
 
 export const Navbar = () => {
-  const { user, signOut } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/login");
-  };
+  const { user, pathname, scrolled, handleSignOut } = useNavbar();
 
   return (
     <>
@@ -37,20 +18,24 @@ export const Navbar = () => {
           <div className="flex items-center justify-between h-16">
             {/* Sol taraf - Brand ve Navigation */}
             <div className="flex items-center gap-8">
-              <Link href="/" className="flex items-center gap-2">
-                <Image
-                  src="/next.svg"
-                  alt="Sentese AI"
-                  width={32}
-                  height={32}
-                  className="rounded-lg"
-                />
+              <Link href="/dashboard" className="flex items-center gap-2">
                 <span className="text-white font-bold text-xl">Sentese AI</span>
               </Link>
 
               {/* Ana Navigasyon */}
               {user && (
                 <div className="hidden md:flex items-center gap-4">
+                  <Link
+                    href="/dashboard"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+                      pathname === "/dashboard"
+                        ? "bg-blue-600 text-white"
+                        : "text-zinc-400 hover:text-white hover:bg-[#222]"
+                    }`}
+                  >
+                    <AiOutlineDashboard size={18} />
+                    Dashboard
+                  </Link>
                   <Link
                     href="/practice"
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
@@ -93,7 +78,20 @@ export const Navbar = () => {
                 >
                   <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-[#222] shadow-lg border border-[#333] focus:outline-none">
                     <div className="py-1">
-                      {/* Mobil Görünümde Kelime Pratiği Linki */}
+                      {/* Mobil Görünümde Dashboard ve Kelime Pratiği Linkleri */}
+                      <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            href="/dashboard"
+                            className={`${
+                              active ? "bg-[#333]" : ""
+                            } flex md:hidden items-center gap-2 px-4 py-2 text-sm text-white`}
+                          >
+                            <AiOutlineDashboard size={16} />
+                            Dashboard
+                          </Link>
+                        )}
+                      </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
                           <Link

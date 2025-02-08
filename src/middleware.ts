@@ -1,18 +1,20 @@
 // middleware.ts
 import { NextResponse, NextRequest } from "next/server";
 
-// Public sayfalar
-const publicPages = ["/login", "/register"];
-// Korumalı sayfalar
-const protectedPages = ["/", "/dashboard", "/profile", "/settings"];
+// Public sayfalar (herkesin erişebileceği)
+const publicPages = ["/", "/login", "/register"];
+
+// Korumalı sayfalar (sadece giriş yapmış kullanıcıların erişebileceği)
+const protectedPages = ["/dashboard", "/practice", "/profile", "/settings"];
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token");
   const { pathname } = request.nextUrl;
 
-  // Public sayfalar (login ve register)
-  if (pathname.startsWith("/login") || pathname.startsWith("/register")) {
-    if (token) {
+  // Public sayfalar için kontrol
+  if (publicPages.includes(pathname)) {
+    // Kullanıcı giriş yapmışsa ve login/register sayfalarına gitmeye çalışıyorsa
+    if (token && (pathname === "/login" || pathname === "/register")) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return NextResponse.next();

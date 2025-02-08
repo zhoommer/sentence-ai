@@ -4,17 +4,11 @@ import { useAuth } from "@/lib/firebase/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { AiOutlineBook, AiOutlineTranslation, AiOutlineRobot, AiOutlineArrowRight } from "react-icons/ai";
 import { FaSpinner } from "react-icons/fa";
-import { useEffect } from "react";
+import { PricingPlans } from "@/features/subscription/components/PricingPlans";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
-    }
-  }, [loading, user, router]);
 
   if (loading) {
     return (
@@ -24,7 +18,13 @@ export default function Home() {
     );
   }
 
-  if (!user) return null;
+  const handleGetStarted = () => {
+    if (user) {
+      router.push("/practice");
+    } else {
+      router.push("/register");
+    }
+  };
 
   return (
     <main className="min-h-screen">
@@ -38,10 +38,10 @@ export default function Home() {
             Yapay zeka destekli alıştırmalarla İngilizce kelime dağarcığınızı geliştirin ve çeviri yeteneklerinizi güçlendirin.
           </p>
           <button
-            onClick={() => router.push("/practice")}
+            onClick={handleGetStarted}
             className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
           >
-            Hemen Başla
+            {user ? "Pratiğe Başla" : "Hemen Başla"}
             <AiOutlineArrowRight size={20} />
           </button>
         </div>
@@ -90,6 +90,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Fiyatlandırma Planları */}
+      <PricingPlans />
+
       {/* CTA Section */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -100,10 +103,10 @@ export default function Home() {
             İngilizce öğrenme yolculuğunuzda size yardımcı olmak için buradayız.
           </p>
           <button
-            onClick={() => router.push("/practice")}
+            onClick={handleGetStarted}
             className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
           >
-            Kelime Pratiğine Başla
+            {user ? "Kelime Pratiğine Başla" : "Hesap Oluştur"}
             <AiOutlineArrowRight size={20} />
           </button>
         </div>

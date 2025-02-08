@@ -1,43 +1,44 @@
-# Node modules
-node_modules/
-.next/
-out/
-dist/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependency directories
+# dependencies
+/node_modules
 /.pnp
 .pnp.js
 
-# Debug logs
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-# Local environment variables
+# local env files
+.env*.local
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.development
+.env.production
 
-# Miscellaneous
-.DS_Store
-*.pem
-.vscode/
-.idea/
-*.swp
-*.swo
+# vercel
+.vercel
 
-# TypeScript cache
+# typescript
 *.tsbuildinfo
+next-env.d.ts
 
-# Static files cache
-.cache/
-
-# Build artifacts
-*.lock
-.vercel/
-.firebase/
+# Firebase
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
 

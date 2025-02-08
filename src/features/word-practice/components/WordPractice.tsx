@@ -1,231 +1,310 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { AiOutlineSearch, AiOutlineCheck, AiOutlineClose, AiOutlineFilter } from "react-icons/ai";
-import { FaSpinner } from "react-icons/fa";
-import { createTurkishSentence, checkTranslation, getWordList } from "@/app/genkit";
+import { useWordPractice } from "../hooks/useWordPractice";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import Label from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Card from "@/components/ui/card";
+import { ChangeEvent, useState, useEffect } from "react";
+import { UserLevel } from "../hooks/useWordPractice";
+import { createTurkishSentence } from "@/lib/genkit";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { statisticsService } from "@/features/statistics/services/statisticsService";
+import { useSubscription } from "@/features/subscription/hooks/useSubscription";
+import { PLAN_FEATURES } from "@/features/subscription/types";
+import { useRouter } from "next/navigation";
 
-type Word = {
-  word: string;
-  level: string;
-  category: string;
-};
+const userLevelOptions: { value: UserLevel; label: string }[] = [
+  { value: "beginner", label: "Başlangıç" },
+  { value: "intermediate", label: "Orta" },
+  { value: "advanced", label: "İleri" },
+];
 
 export const WordPractice = () => {
-  const [selectedWord, setSelectedWord] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [turkishSentence, setTurkishSentence] = useState("");
-  const [userTranslation, setUserTranslation] = useState("");
-  const [aiResponse, setAiResponse] = useState<{
-    isCorrect: boolean;
-    feedback: string;
-    corrections?: string;
-  } | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [words, setWords] = useState<Word[]>([]);
-  const [selectedLevel, setSelectedLevel] = useState<string>("all");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const { user } = useAuth();
+  const {
+    selectedWord,
+    setSelectedWord,
+    searchQuery,
+    setSearchQuery,
+    turkishSentence,
+    setTurkishSentence,
+    userTranslation,
+    setUserTranslation,
+    aiResponse,
+    loading,
+    setLoading,
+    filteredWords,
+    categories,
+    levels,
+    selectedLevel,
+    setSelectedLevel,
+    selectedCategory,
+    setSelectedCategory,
+    userLevel,
+    setUserLevel,
+    handleGenerateSentence,
+    handleCheckTranslation,
+  } = useWordPractice();
 
-  // Kelime listesini yükle
-  useEffect(() => {
-    const loadWords = async () => {
-      const wordList = await getWordList();
-      setWords(wordList);
-    };
-    loadWords();
-  }, []);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [correctTranslation, setCorrectTranslation] = useState("");
+  const { checkUsageLimit, getRemainingUsage, subscription } = useSubscription();
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Filtreleme fonksiyonu
-  const filteredWords = words.filter(word => {
-    const matchesSearch = word.word.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesLevel = selectedLevel === "all" || word.level === selectedLevel;
-    const matchesCategory = selectedCategory === "all" || word.category === selectedCategory;
-    return matchesSearch && matchesLevel && matchesCategory;
-  });
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
-  // Benzersiz kategorileri al
-  const categories = ["all", ...new Set(words.map(word => word.category))];
-  const levels = ["all", ...new Set(words.map(word => word.level))];
+  const handleTranslationChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUserTranslation(e.target.value);
+  };
 
-  const handleGenerateSentence = async () => {
-    setLoading(true);
-    try {
-      const sentence = await createTurkishSentence(selectedWord);
-      setTurkishSentence(sentence);
+  const handleLevelChange = (level: UserLevel) => {
+    setUserLevel(level);
+    if (selectedWord) {
+      setTurkishSentence("");
       setUserTranslation("");
-      setAiResponse(null);
-    } catch (error) {
-      console.error("Cümle oluşturulurken hata:", error);
-    } finally {
-      setLoading(false);
+      setIsCorrect(null);
+      setCorrectTranslation("");
     }
   };
 
-  const handleCheckTranslation = async () => {
+  const handleSubmit = async () => {
+    if (!user) return;
+
+    // Kullanım limiti kontrolü
+    const canProceed = await checkUsageLimit();
+    if (!canProceed) {
+      const remaining = getRemainingUsage();
+      if (remaining === 0) {
+        setError("Aylık pratik limitinize ulaştınız. Daha fazla pratik yapmak için planınızı yükseltin.");
+        return;
+      }
+    }
+
     setLoading(true);
     try {
-      const response = await checkTranslation(turkishSentence, userTranslation, selectedWord);
-      setAiResponse(response);
+      const response = await fetch("/api/check-translation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          turkishSentence,
+          userTranslation,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Çeviri kontrolü sırasında bir hata oluştu");
+      }
+
+      const data = await response.json();
+      const isAnswerCorrect = data.isCorrect;
+      setIsCorrect(isAnswerCorrect);
+      setCorrectTranslation(data.correctTranslation);
+
+      // İstatistikleri kaydet
+      try {
+        await statisticsService.savePracticeResult(user.uid, {
+          word: selectedWord,
+          userLevel,
+          isCorrect: isAnswerCorrect,
+          turkishSentence,
+          userTranslation,
+          correctTranslation: data.correctTranslation,
+        });
+
+        // Streak'i güncelle
+        await statisticsService.updateStreak(user.uid);
+
+        console.log("İstatistikler başarıyla kaydedildi!");
+      } catch (error) {
+        console.error("İstatistik kaydı sırasında hata:", error);
+      }
     } catch (error) {
-      console.error("Çeviri kontrol edilirken hata:", error);
+      console.error("Çeviri kontrolü hatası:", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Kelime Seçimi */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Kelime Seçin</h2>
-        
-        {/* Arama ve Filtreler */}
-        <div className="space-y-4">
-          {/* Arama */}
-          <div className="relative">
-            <AiOutlineSearch className="absolute left-3 top-3 text-zinc-400" size={20} />
-            <input
-              type="text"
-              placeholder="Kelime ara..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10"
-            />
-          </div>
-
-          {/* Filtreler */}
-          <div className="flex gap-4">
-            {/* Seviye Filtresi */}
-            <div className="flex-1">
-              <select
-                value={selectedLevel}
-                onChange={(e) => setSelectedLevel(e.target.value)}
-                className="w-full bg-[#222] text-white rounded-lg px-4 py-2 border border-[#333]"
+    <div className="container mx-auto p-4">
+      {/* Hata mesajı */}
+      {error && (
+        <div className="mb-8 p-4 bg-red-500/10 rounded-lg border border-red-500/20">
+          <div className="flex items-center justify-between">
+            <p className="text-red-500">{error}</p>
+            {subscription && subscription.plan !== "premium" && (
+              <button
+                onClick={() => router.push("/pricing")}
+                className="text-sm px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
               >
-                <option value="all">Tüm Seviyeler</option>
-                {levels.filter(level => level !== "all").map((level) => (
-                  <option key={level} value={level}>{level}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Kategori Filtresi */}
-            <div className="flex-1">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full bg-[#222] text-white rounded-lg px-4 py-2 border border-[#333]"
-              >
-                <option value="all">Tüm Kategoriler</option>
-                {categories.filter(category => category !== "all").map((category) => (
-                  <option key={category} value={category}>
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
+                Planı Yükselt
+              </button>
+            )}
           </div>
         </div>
+      )}
 
-        {/* Kelime Listesi */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {filteredWords.map((word) => (
-            <button
-              key={word.word}
-              onClick={() => setSelectedWord(word.word)}
-              className={`px-4 py-2 rounded-lg text-sm ${
-                selectedWord === word.word
-                  ? "bg-blue-600 text-white"
-                  : "bg-[#222] hover:bg-[#333] text-white"
-              }`}
-            >
-              {word.word}
-            </button>
-          ))}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold">Kelime Pratiği</h1>
+          {/* Kalan kullanım hakkı göstergesi */}
+          {subscription && subscription.plan !== "premium" && (
+            <div className="p-2 bg-[#111] rounded-lg border border-[#222] text-sm text-zinc-400">
+              Bu ay kalan pratik hakkınız:{" "}
+              <span className="font-bold text-white">
+                {getRemainingUsage()} / {PLAN_FEATURES[subscription.plan].practiceLimit}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <Label>Kelime Ara</Label>
+            <Input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Kelime ara..."
+            />
+          </div>
+          <div>
+            <Label>Seviye</Label>
+            <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seviye seç" />
+              </SelectTrigger>
+              <SelectContent>
+                {levels.map((level) => (
+                  <SelectItem key={level} value={level}>
+                    {level === "all" ? "Tüm Seviyeler" : level}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Kategori</Label>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Kategori seç" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category === "all" ? "Tüm Kategoriler" : category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
-      {/* Seçilen Kelime ve Cümle Oluşturma */}
-      {selectedWord && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4">
-            Seçilen Kelime: <span className="text-blue-500">{selectedWord}</span>
-          </h3>
-          <button
-            onClick={handleGenerateSentence}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium disabled:opacity-50"
-          >
-            {loading ? (
-              <FaSpinner className="animate-spin mx-auto" />
-            ) : (
-              "Türkçe Cümle Oluştur"
-            )}
-          </button>
-        </div>
-      )}
-
-      {/* Türkçe Cümle */}
-      {turkishSentence && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4">Türkçe Cümle</h3>
-          <div className="bg-[#222] p-4 rounded-xl">
-            <p className="text-white">{turkishSentence}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="p-4">
+          <h2 className="text-xl font-semibold mb-4">Kelime Listesi</h2>
+          <div className="h-[400px] overflow-y-auto">
+            {filteredWords.map((word) => (
+              <button
+                key={word.word}
+                onClick={() => setSelectedWord(word.word)}
+                className={`w-full text-left p-2 hover:bg-[#333] rounded ${
+                  selectedWord === word.word ? "bg-[#333]" : ""
+                }`}
+              >
+                {word.word}
+              </button>
+            ))}
           </div>
-        </div>
-      )}
+        </Card>
 
-      {/* Kullanıcı Çevirisi */}
-      {turkishSentence && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4">İngilizce Çeviriniz</h3>
-          <textarea
-            value={userTranslation}
-            onChange={(e) => setUserTranslation(e.target.value)}
-            placeholder="Cümlenin İngilizce çevirisini yazın..."
-            className="w-full h-32 bg-[#222] text-white rounded-xl p-4 resize-none"
-          />
-          <button
-            onClick={handleCheckTranslation}
-            disabled={!userTranslation || loading}
-            className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium disabled:opacity-50"
-          >
-            {loading ? (
-              <FaSpinner className="animate-spin mx-auto" />
-            ) : (
-              "Çeviriyi Kontrol Et"
-            )}
-          </button>
-        </div>
-      )}
+        <Card className="p-4">
+          <h2 className="text-xl font-semibold mb-4">Pratik</h2>
+          {selectedWord && (
+            <div>
+              <p className="mb-2">
+                <strong>Seçilen Kelime:</strong> {selectedWord}
+              </p>
+              {!turkishSentence && (
+                <Button
+                  onClick={handleGenerateSentence}
+                  disabled={loading}
+                >
+                  {loading ? "Yükleniyor..." : "Cümle Oluştur"}
+                </Button>
+              )}
 
-      {/* AI Geri Bildirimi */}
-      {aiResponse && (
-        <div className={`p-4 rounded-xl ${
-          aiResponse.isCorrect ? "bg-green-500/10" : "bg-red-500/10"
-        }`}>
-          <div className="flex items-center gap-2 mb-2">
-            {aiResponse.isCorrect ? (
-              <AiOutlineCheck className="text-green-500" size={20} />
-            ) : (
-              <AiOutlineClose className="text-red-500" size={20} />
-            )}
-            <h3 className="text-xl font-bold">
-              {aiResponse.isCorrect ? "Doğru!" : "Tekrar Deneyin"}
-            </h3>
-          </div>
-          <p className={`text-sm ${
-            aiResponse.isCorrect ? "text-green-500" : "text-red-500"
-          }`}>
-            {aiResponse.feedback}
-          </p>
-          {aiResponse.corrections && (
-            <p className="mt-2 text-sm text-zinc-400">
-              Önerilen düzeltme: {aiResponse.corrections}
-            </p>
+              {turkishSentence && (
+                <div className="mb-4">
+                  <p className="mb-2">
+                    <strong>Türkçe Cümle:</strong>
+                  </p>
+                  <p className="p-2 bg-[#222] rounded">{turkishSentence}</p>
+                </div>
+              )}
+
+              {turkishSentence && (
+                <div className="mb-4">
+                  <Label>İngilizce Çeviri</Label>
+                  <Input
+                    value={userTranslation}
+                    onChange={handleTranslationChange}
+                    placeholder="Çevirinizi yazın..."
+                    className="mb-2"
+                    disabled={loading}
+                  />
+                  <div className="flex gap-2">
+                    {userTranslation.trim() !== "" && (
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={loading}
+                      >
+                        {loading ? "Kontrol Ediliyor..." : "Kontrol Et"}
+                      </Button>
+                    )}
+                    <Button
+                      onClick={() => {
+                        setTurkishSentence("");
+                        setUserTranslation("");
+                        setIsCorrect(null);
+                        setCorrectTranslation("");
+                        handleGenerateSentence();
+                      }}
+                      disabled={loading}
+                      variant="secondary"
+                    >
+                      {loading ? "Yükleniyor..." : "Yeni Cümle"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {isCorrect !== null && (
+                <div
+                  className={`p-4 rounded-lg ${
+                    isCorrect ? "bg-green-500/10" : "bg-red-500/10"
+                  }`}
+                >
+                  {isCorrect ? "Doğru! 🎉" : "Yanlış. Doğru çeviri: " + correctTranslation}
+                </div>
+              )}
+            </div>
           )}
-        </div>
-      )}
+        </Card>
+      </div>
     </div>
   );
 }; 
