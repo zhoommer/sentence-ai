@@ -3,9 +3,9 @@
 import { usePracticeHistory } from "../hooks/usePracticeHistory";
 import Card from "@/components/ui/card";
 import { FaSpinner } from "react-icons/fa";
-
+import Input from "@/components/ui/input";
 export const PracticeHistory = () => {
-  const { practiceHistory, loading, error, hasPractices } = usePracticeHistory();
+  const { practiceHistory, loading, error, hasPractices, handleSearch } = usePracticeHistory();
 
   if (loading) {
     return (
@@ -35,6 +35,14 @@ export const PracticeHistory = () => {
     <Card className="flex flex-col h-[800px]">
       <div className="p-4 border-b border-[#222]">
         <h3 className="text-lg font-semibold">Pratik Geçmişi</h3>
+        <div className="mt-4">
+          <Input
+            type="text"
+            placeholder="Kelime ara..."
+            className="w-full"
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </div>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
