@@ -60,7 +60,10 @@ export default function DashboardPage() {
         </div>
 
         {/* Geçmiş Kartı */}
-        <div className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-[#333] transition-colors cursor-pointer group">
+        <div
+          onClick={() => router.push("/practice-history")}
+          className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-[#333] transition-colors cursor-pointer group"
+        >
           <div className="w-12 h-12 bg-purple-600/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-600/20 transition-colors">
             <AiOutlineHistory className="text-2xl text-purple-500" />
           </div>

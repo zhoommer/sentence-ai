@@ -1,35 +1,121 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { registerService } from "../services/registerService";
 import { userService } from "../../services/userService";
 import Cookies from "js-cookie";
 
 export const useRegister = () => {
-  const registerWithEmail = async (email: string, password: string, displayName: string) => {
-    const result = await registerService.registerWithEmail(email, password);
-    const token = await registerService.getToken(result.user);
-    
-    // Kullanıcı profilini oluştur
-    await userService.createUserProfile(result.user.uid, email, displayName);
-    
-    Cookies.set("token", token, { expires: 7 });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    terms: false,
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const validateForm = () => {
+    if (!formData.terms) {
+      setError("Kullanım şartlarını kabul etmelisiniz");
+      return false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Şifreler eşleşmiyor");
+      return false;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Şifre en az 6 karakter olmalıdır");
+      return false;
+    }
+
+    if (!formData.name.trim()) {
+      setError("Ad Soyad alanı zorunludur");
+      return false;
+    }
+
+    return true;
+  };
+
+  const registerWithEmail = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      if (!validateForm()) {
+        setLoading(false);
+        return;
+      }
+
+      const result = await registerService.registerWithEmail(formData.email, formData.password);
+      const token = await registerService.getToken(result.user);
+      
+      // Kullanıcı profilini oluştur
+      await userService.createUserProfile(result.user.uid, formData.email, formData.name);
+      
+      Cookies.set("token", token, { expires: 7 });
+      router.refresh();
+      router.push("/dashboard");
+    } catch (error: any) {
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          setError("Bu email adresi zaten kullanımda");
+          break;
+        case "auth/invalid-email":
+          setError("Geçersiz email adresi");
+          break;
+        default:
+          setError("Kayıt işlemi başarısız oldu");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const registerWithGoogle = async () => {
-    const result = await registerService.registerWithGoogle();
-    const token = await registerService.getToken(result.user);
-    
-    // Google ile giriş yapan kullanıcının profilini oluştur
-    if (result.user.displayName) {
-      await userService.createUserProfile(
-        result.user.uid,
-        result.user.email!,
-        result.user.displayName
-      );
+    try {
+      setLoading(true);
+      setError("");
+      const result = await registerService.registerWithGoogle();
+      const token = await registerService.getToken(result.user);
+      
+      // Google ile giriş yapan kullanıcının profilini oluştur
+      if (result.user.displayName) {
+        await userService.createUserProfile(
+          result.user.uid,
+          result.user.email!,
+          result.user.displayName
+        );
+      }
+      
+      Cookies.set("token", token, { expires: 7 });
+      router.refresh();
+      router.push("/dashboard");
+    } catch (error: any) {
+      setError("Google ile kayıt başarısız oldu");
+    } finally {
+      setLoading(false);
     }
-    
-    Cookies.set("token", token, { expires: 7 });
   };
 
   return {
+    formData,
+    error,
+    loading,
+    handleChange,
     registerWithEmail,
     registerWithGoogle,
   };

@@ -1,37 +1,38 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createTurkishSentence, checkTranslation, getWordList } from "@/app/genkit";
+import { wordPracticeService } from "../services/wordPracticeService";
+import { Word } from "../types";
+import { useAuth } from "@/lib/firebase/hooks/useAuth";
+import { statisticsService } from "@/features/statistics/services/statisticsService";
 
-type Word = {
-  word: string;
-  level: string;
-  category: string;
-};
-
-export type UserLevel = "beginner" | "intermediate" | "advanced";
+type UserLevel = "beginner" | "intermediate" | "advanced";
 
 export const useWordPractice = () => {
-  const [selectedWord, setSelectedWord] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [turkishSentence, setTurkishSentence] = useState("");
-  const [userTranslation, setUserTranslation] = useState("");
-  const [aiResponse, setAiResponse] = useState<{
-    isCorrect: boolean;
-    feedback: string;
-    corrections?: string;
-  } | null>(null);
+  const { user } = useAuth();
+  const [turkishSentence, setTurkishSentence] = useState<string>("");
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [correctTranslation, setCorrectTranslation] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedWord, setSelectedWord] = useState<string>("");
+  const [userTranslation, setUserTranslation] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState<UserLevel>("beginner");
   const [words, setWords] = useState<Word[]>([]);
-  const [selectedLevel, setSelectedLevel] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [userLevel, setUserLevel] = useState<UserLevel>("beginner");
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
   // Kelime listesini yükle
   useEffect(() => {
     const loadWords = async () => {
-      const wordList = await getWordList();
-      setWords(wordList);
+      try {
+        const wordList = await wordPracticeService.getWordList();
+        setWords(wordList);
+      } catch (error) {
+        console.error("Kelime listesi yüklenirken hata:", error);
+        setError("Kelime listesi yüklenemedi");
+      }
     };
     loadWords();
   }, []);
@@ -39,7 +40,7 @@ export const useWordPractice = () => {
   // Filtreleme fonksiyonu
   const filteredWords = words.filter(word => {
     const matchesSearch = word.word.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesLevel = selectedLevel === "all" || word.level === selectedLevel;
+    const matchesLevel = selectedFilter === "all" || word.level === selectedFilter;
     const matchesCategory = selectedCategory === "all" || word.category === selectedCategory;
     return matchesSearch && matchesLevel && matchesCategory;
   });
@@ -48,54 +49,87 @@ export const useWordPractice = () => {
   const categories = ["all", ...new Set(words.map(word => word.category))];
   const levels = ["all", ...new Set(words.map(word => word.level))];
 
-  const handleGenerateSentence = async () => {
+  const generateSentence = async (word: string) => {
     setLoading(true);
+    setError(null);
     try {
-      const sentence = await createTurkishSentence(selectedWord, userLevel);
+      const sentence = await wordPracticeService.generateSentence(word, selectedLevel);
       setTurkishSentence(sentence);
+      setSelectedWord(word);
       setUserTranslation("");
-      setAiResponse(null);
+      setIsCorrect(null);
+      setCorrectTranslation("");
     } catch (error) {
-      console.error("Cümle oluşturulurken hata:", error);
+      setError("Cümle oluşturulurken bir hata oluştu");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCheckTranslation = async () => {
+  const checkTranslation = async () => {
+    if (!userTranslation.trim()) {
+      setError("Lütfen çevirinizi girin");
+      return;
+    }
+
     setLoading(true);
+    setError(null);
+
     try {
-      const response = await checkTranslation(turkishSentence, userTranslation, selectedWord);
-      setAiResponse(response);
+      const result = await wordPracticeService.checkTranslation(turkishSentence, userTranslation);
+      setIsCorrect(result.isCorrect);
+      setCorrectTranslation(result.correctTranslation);
+
+      // Pratik sonucunu veritabanına kaydet
+      if (user) {
+        await statisticsService.savePracticeResult(user.uid, {
+          word: selectedWord,
+          userLevel: selectedLevel,
+          isCorrect: result.isCorrect,
+          turkishSentence,
+          userTranslation,
+          correctTranslation: result.correctTranslation,
+        });
+      }
     } catch (error) {
-      console.error("Çeviri kontrol edilirken hata:", error);
+      setError("Çeviri kontrolü sırasında bir hata oluştu");
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetStates = () => {
+    setTurkishSentence("");
+    setUserTranslation("");
+    setIsCorrect(null);
+    setCorrectTranslation("");
+    setError(null);
   };
 
   return {
-    selectedWord,
-    setSelectedWord,
-    searchQuery,
-    setSearchQuery,
     turkishSentence,
-    setTurkishSentence,
-    userTranslation,
-    setUserTranslation,
-    aiResponse,
+    isCorrect,
+    correctTranslation,
     loading,
-    setLoading,
+    error,
+    selectedWord,
+    userTranslation,
+    selectedLevel,
+    words,
     filteredWords,
     categories,
     levels,
-    selectedLevel,
-    setSelectedLevel,
+    searchQuery,
     selectedCategory,
+    selectedFilter,
+    setUserTranslation,
+    setSelectedLevel,
+    setSearchQuery,
     setSelectedCategory,
-    userLevel,
-    setUserLevel,
-    handleGenerateSentence,
-    handleCheckTranslation,
+    setSelectedFilter,
+    setSelectedWord,
+    generateSentence,
+    checkTranslation,
+    resetStates,
   };
 }; 
