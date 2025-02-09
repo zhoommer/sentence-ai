@@ -22,4 +22,3 @@ runConfig:
 env:
   variable: NEXT_PUBLIC_FIREBASE_API_KEY
   secret: webapp-firebase-api-key
-  availability:
