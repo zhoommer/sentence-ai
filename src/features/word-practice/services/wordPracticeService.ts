@@ -5,8 +5,7 @@ import {
   getWordList as getWordListFromGenkit,
 } from "@/lib/genkit";
 import { Word } from "../types";
-
-type UserLevel = "beginner" | "intermediate" | "advanced";
+import { UserLevel } from "../types";
 
 export const wordPracticeService = {
   // Kelime listesini getir
@@ -54,4 +53,3 @@ export const wordPracticeService = {
     }
   },
 };
-

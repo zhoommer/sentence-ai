@@ -65,8 +65,5 @@ export async function createTurkishSentence(
 }
 
 export async function getWordList(): Promise<Word[]> {
-  // Şimdilik statik kelime listesini döndürüyoruz
-  // İleride bu fonksiyon bir API'den veya veritabanından kelime listesini çekebilir
   return wordList;
 }
-

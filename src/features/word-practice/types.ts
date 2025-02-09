@@ -1,6 +1,6 @@
 export type Word = {
   word: string;
-  level: string;
+  level: UserLevel;
   category: string;
 };
 

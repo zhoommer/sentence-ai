@@ -11,4 +11,3 @@ export type AIResponse = {
   feedback: string;
   corrections?: string;
 };
-
