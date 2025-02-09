@@ -37,7 +37,9 @@ const RegisterForm = () => {
         <div className="bg-[#000]/50 backdrop-blur-lg rounded-2xl p-8 shadow-xl">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-white">Kayıt Ol</h2>
-            <p className="text-zinc-400 text-sm mt-1">Yeni bir hesap oluşturun</p>
+            <p className="text-zinc-400 text-sm mt-1">
+              Yeni bir hesap oluşturun
+            </p>
           </div>
 
           {error && (
@@ -188,4 +190,5 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm; 
+export default RegisterForm;
+

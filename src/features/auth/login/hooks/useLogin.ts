@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import Cookies from "js-cookie";
 
 export const useLogin = () => {
@@ -28,7 +32,11 @@ export const useLogin = () => {
     try {
       setLoading(true);
       setError("");
-      const result = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      const result = await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password,
+      );
       const token = await result.user.getIdToken();
       Cookies.set("token", token, { expires: formData.remember ? 7 : 1 });
       router.refresh();
@@ -80,4 +88,5 @@ export const useLogin = () => {
     loginWithEmail,
     loginWithGoogle,
   };
-}; 
+};
+

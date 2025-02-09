@@ -26,7 +26,9 @@ export const Statistics = () => {
   if (!stats) {
     return (
       <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-        <p className="text-blue-500">Henüz pratik kaydınız bulunmuyor. Pratik yapmaya başlayın!</p>
+        <p className="text-blue-500">
+          Henüz pratik kaydınız bulunmuyor. Pratik yapmaya başlayın!
+        </p>
       </div>
     );
   }
@@ -41,19 +43,26 @@ export const Statistics = () => {
 
         <Card className="p-4">
           <h3 className="text-sm text-zinc-400 mb-1">Doğru Cevap</h3>
-          <p className="text-2xl font-bold text-green-500">{stats.correctAnswers}</p>
+          <p className="text-2xl font-bold text-green-500">
+            {stats.correctAnswers}
+          </p>
         </Card>
 
         <Card className="p-4">
           <h3 className="text-sm text-zinc-400 mb-1">Yanlış Cevap</h3>
-          <p className="text-2xl font-bold text-red-500">{stats.wrongAnswers}</p>
+          <p className="text-2xl font-bold text-red-500">
+            {stats.wrongAnswers}
+          </p>
         </Card>
 
         <Card className="p-4">
           <h3 className="text-sm text-zinc-400 mb-1">Başarı Oranı</h3>
-          <p className="text-2xl font-bold text-blue-500">%{getSuccessRate()}</p>
+          <p className="text-2xl font-bold text-blue-500">
+            %{getSuccessRate()}
+          </p>
         </Card>
       </div>
     </div>
   );
-}; 
+};
+

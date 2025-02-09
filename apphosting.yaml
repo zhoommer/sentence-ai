@@ -19,6 +19,8 @@ env:
     secret: web-app-firebase-messaging-sender-id
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     secret: web-app-firebase-app-id
+  - variable: NEXT_PUBLIC_GOOGLE_GENAI_API_KEY
+    secret: web-app-google-genai-api-key
 
 # Environment variables and secrets.
 # env:

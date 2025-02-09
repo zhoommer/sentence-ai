@@ -6,15 +6,6 @@ import {
   connectFirestoreEmulator,
 } from "firebase/firestore";
 
-console.log("Environment Variables:", {
-  NODE_ENV: process.env.NODE_ENV,
-  USE_FIREBASE_EMULATOR: process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR,
-  FIREBASE_AUTH_EMULATOR_HOST:
-    process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST,
-  FIREBASE_FIRESTORE_EMULATOR_HOST:
-    process.env.NEXT_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST,
-});
-
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -23,11 +14,6 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
-
-console.log("Firebase Config:", {
-  ...firebaseConfig,
-  apiKey: firebaseConfig.apiKey?.slice(0, 5) + "...", // API anahtarını gizle
-});
 
 // Firebase app'i başlat
 const app = initializeApp(firebaseConfig);
@@ -81,4 +67,3 @@ if (process.env.NODE_ENV === "production") {
 }
 
 export { auth, db };
-

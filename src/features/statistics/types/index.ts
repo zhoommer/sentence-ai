@@ -18,4 +18,5 @@ export interface PracticeRecord {
   userTranslation: string;
   correctTranslation?: string;
   timestamp: Timestamp;
-} 
+}
+
