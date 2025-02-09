@@ -32,9 +32,9 @@ export const subscriptionService = {
 
       await setDoc(docRef, {
         ...freeSubscription,
-        startDate: Timestamp.fromDate(freeSubscription.startDate),
-        endDate: Timestamp.fromDate(freeSubscription.endDate),
-        lastResetDate: Timestamp.fromDate(freeSubscription.lastResetDate),
+        startDate: Timestamp.fromDate(freeSubscription.startDate!),
+        endDate: Timestamp.fromDate(freeSubscription.endDate!),
+        lastResetDate: Timestamp.fromDate(freeSubscription.lastResetDate!),
       });
 
       return freeSubscription;

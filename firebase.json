@@ -21,5 +21,13 @@
       "port": 4000
     },
     "singleProjectMode": true
+  },
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextjsApp"
+      }
+    ]
   }
 }

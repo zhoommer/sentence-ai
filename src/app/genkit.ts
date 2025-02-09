@@ -1,19 +1,27 @@
 "use server";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { UserLevel } from "@/features/word-practice/hooks/useWordPractice";
+import { UserLevel } from "../features/word-practice/types";
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_GENAI_API_KEY!);
+const genAI = new GoogleGenerativeAI(
+  process.env.NEXT_PUBLIC_GOOGLE_GENAI_API_KEY!,
+);
 
 // Türkçe cümle oluşturma
-export async function createTurkishSentence(word: string, userLevel: UserLevel) {
+export async function createTurkishSentence(
+  word: string,
+  userLevel: UserLevel,
+) {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const levelDescriptions = {
-      beginner: "Basit, günlük hayattan, 5-7 kelimelik kısa cümleler. Temel fiil zamanları (şimdiki zaman, geniş zaman) kullanılmalı.",
-      intermediate: "8-10 kelimelik, birleşik cümleler. Daha karmaşık fiil zamanları (geçmiş zaman, gelecek zaman) kullanılabilir.",
-      advanced: "10-15 kelimelik, karmaşık yapıda cümleler. Tüm fiil zamanları, edilgen yapı ve dolaylı anlatım kullanılabilir.",
+      beginner:
+        "Basit, günlük hayattan, 5-7 kelimelik kısa cümleler. Temel fiil zamanları (şimdiki zaman, geniş zaman) kullanılmalı.",
+      intermediate:
+        "8-10 kelimelik, birleşik cümleler. Daha karmaşık fiil zamanları (geçmiş zaman, gelecek zaman) kullanılabilir.",
+      advanced:
+        "10-15 kelimelik, karmaşık yapıda cümleler. Tüm fiil zamanları, edilgen yapı ve dolaylı anlatım kullanılabilir.",
     };
 
     const prompt = `Sen bir dil öğretmenisin. Sana verilen İngilizce kelimeyi kullanarak Türkçe bir cümle oluştur.
@@ -37,7 +45,7 @@ export async function createTurkishSentence(word: string, userLevel: UserLevel) 
 export async function checkTranslation(
   originalTurkishSentence: string,
   userTranslation: string,
-  originalWord: string
+  originalWord: string,
 ) {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
@@ -64,12 +72,12 @@ Return EXACTLY in this format (do not include any other text):
 
     const result = await model.generateContent(prompt);
     const response = result.response;
-    
+
     try {
       // Yanıttan fazladan boşlukları ve satır sonlarını temizle
       const cleanResponse = response.text().trim().replace(/\\n/g, "");
       const parsedResponse = JSON.parse(cleanResponse);
-      
+
       // Yanıt formatını kontrol et
       if (
         typeof parsedResponse.isCorrect !== "boolean" ||
@@ -83,12 +91,13 @@ Return EXACTLY in this format (do not include any other text):
     } catch (parseError) {
       console.error("JSON parse hatası:", parseError);
       console.error("AI yanıtı:", response.text()); // Hata ayıklama için AI yanıtını logla
-      
+
       // Varsayılan yanıt döndür
       return {
         isCorrect: false,
-        feedback: "Çeviriniz değerlendirilirken teknik bir hata oluştu. Lütfen tekrar deneyin.",
-        corrections: ""
+        feedback:
+          "Çeviriniz değerlendirilirken teknik bir hata oluştu. Lütfen tekrar deneyin.",
+        corrections: "",
       };
     }
   } catch (error) {
@@ -205,7 +214,7 @@ export async function getWordList() {
     { word: "drinking", level: "A1", category: "activities" },
     { word: "walking", level: "A1", category: "activities" },
     { word: "talking", level: "A1", category: "activities" },
-    { word: "listening", level: "A1", category: "activities" }
+    { word: "listening", level: "A1", category: "activities" },
   ];
 
   return words;
