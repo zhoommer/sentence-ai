@@ -4,8 +4,22 @@ runConfig:
   minInstances: 0
   # maxInstances: 100
   # concurrency: 80
-  # cpu: 1
-  # memoryMiB: 512
+  cpu: 1
+  memoryMiB: 512
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: web-app-firebase-api-key
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    secret: web-app-firebase-auth-domain
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    secret: web-app-firebase-project-id
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    secret: web-app-firebase-storage-bucket
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    secret: web-app-firebase-messaging-sender-id
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    secret: web-app-firebase-app-id
+
 # Environment variables and secrets.
 # env:
 # Configure environment variables.
@@ -19,6 +33,3 @@ runConfig:
 # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
 # - variable: MY_SECRET
 #   secret: mySecretRef
-env:
-  variable: NEXT_PUBLIC_FIREBASE_API_KEY
-  secret: webapp-firebase-api-key
