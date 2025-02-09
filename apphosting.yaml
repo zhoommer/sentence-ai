@@ -1,0 +1,54 @@
+# Settings for Backend (on Cloud Run).
+# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
+runConfig:
+  minInstances: 0
+  # maxInstances: 100
+  # concurrency: 80
+  # cpu: 1
+  # memoryMiB: 512
+
+# Environment variables and secrets.
+env:
+  # Firebase Configuration
+  - variable: NEXT_PUBLIC_GOOGLE_GENAI_API_KEY
+    value: AIzaSyCi2eIUl3FrvH4U5bkdmaUVPzx7HeT_aK4
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyCn2F0X4RzdcnnzSLO7DbH3XiTrFGNHwH8
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: sentece-ai.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: sentece-ai
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: sentece-ai.firebasestorage.app
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "565844003801"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:565844003801:web:78a999dcbe6702aebbe7c8
+
+  # Firebase Admin SDK
+  - variable: FIREBASE_CLIENT_EMAIL
+    value: akiff.fazill@gmail.com
+
+  # Environment Configuration
+  - variable: NODE_ENV
+    value: production
+  - variable: USE_FIREBASE_EMULATOR
+    value: "false"
+
+  # Gizli anahtarlar için Secret Manager kullanımı
+  - variable: FIREBASE_PRIVATE_KEY
+    secret: firebase-private-key
+# Environment variables and secrets.
+# env:
+# Configure environment variables.
+# See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
+# - variable: MESSAGE
+#   value: Hello world!
+#   availability:
+#     - BUILD
+#     - RUNTIME
+
+# Grant access to secrets in Cloud Secret Manager.
+# See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
+# - variable: MY_SECRET
+#   secret: mySecretRef

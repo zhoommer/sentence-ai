@@ -35,12 +35,11 @@ export const PricingPlans = () => {
     <div className="py-20 px-6 bg-[#0a0a0a]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">
-            Size Uygun Planı Seçin
-          </h2>
+          <h2 className="text-3xl font-bold mb-4">Size Uygun Planı Seçin</h2>
           <p className="text-zinc-400 max-w-2xl mx-auto">
-            Her seviyeye uygun planlarımızla İngilizce öğrenme yolculuğunuzda yanınızdayız.
-            İhtiyacınıza en uygun planı seçin ve hemen öğrenmeye başlayın.
+            Her seviyeye uygun planlarımızla İngilizce öğrenme yolculuğunuzda
+            yanınızdayız. İhtiyacınıza en uygun planı seçin ve hemen öğrenmeye
+            başlayın.
           </p>
         </div>
 
@@ -121,7 +120,9 @@ export const PricingPlans = () => {
                 Sınırsız pratik, maksimum verim
               </p>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">₺{PLAN_PRICES.premium}</span>
+                <span className="text-4xl font-bold">
+                  ₺{PLAN_PRICES.premium}
+                </span>
                 <span className="text-zinc-400">/ay</span>
               </div>
             </div>
@@ -147,30 +148,42 @@ export const PricingPlans = () => {
 
         {/* SSS */}
         <div className="mt-20">
-          <h3 className="text-2xl font-bold mb-8 text-center">Sıkça Sorulan Sorular</h3>
+          <h3 className="text-2xl font-bold mb-8 text-center">
+            Sıkça Sorulan Sorular
+          </h3>
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h4 className="font-bold mb-2">Ücretsiz plan ne kadar süre geçerli?</h4>
+              <h4 className="font-bold mb-2">
+                Ücretsiz plan ne kadar süre geçerli?
+              </h4>
               <p className="text-zinc-400">
-                Ücretsiz plan süresiz olarak geçerlidir. Aylık 50 pratik hakkınızı dilediğiniz gibi kullanabilirsiniz.
+                Ücretsiz plan süresiz olarak geçerlidir. Aylık 50 pratik
+                hakkınızı dilediğiniz gibi kullanabilirsiniz.
               </p>
             </div>
             <div>
-              <h4 className="font-bold mb-2">Planımı istediğim zaman değiştirebilir miyim?</h4>
+              <h4 className="font-bold mb-2">
+                Planımı istediğim zaman değiştirebilir miyim?
+              </h4>
               <p className="text-zinc-400">
-                Evet, planınızı istediğiniz zaman yükseltebilir veya düşürebilirsiniz.
+                Evet, planınızı istediğiniz zaman yükseltebilir veya
+                düşürebilirsiniz.
               </p>
             </div>
             <div>
-              <h4 className="font-bold mb-2">Ödeme yaparken hangi yöntemleri kullanabilirim?</h4>
+              <h4 className="font-bold mb-2">
+                Ödeme yaparken hangi yöntemleri kullanabilirim?
+              </h4>
               <p className="text-zinc-400">
-                Kredi kartı, banka kartı ve diğer popüler ödeme yöntemlerini kullanabilirsiniz.
+                Kredi kartı, banka kartı ve diğer popüler ödeme yöntemlerini
+                kullanabilirsiniz.
               </p>
             </div>
             <div>
               <h4 className="font-bold mb-2">İade politikanız nedir?</h4>
               <p className="text-zinc-400">
-                İlk 14 gün içinde herhangi bir sebep belirtmeden iade talep edebilirsiniz.
+                İlk 14 gün içinde herhangi bir sebep belirtmeden iade talep
+                edebilirsiniz.
               </p>
             </div>
           </div>
@@ -178,4 +191,5 @@ export const PricingPlans = () => {
       </div>
     </div>
   );
-}; 
+};
+
