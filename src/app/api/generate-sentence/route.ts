@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     if (!word || !level) {
       return NextResponse.json(
         { error: "Kelime ve seviye zorunludur" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -19,7 +19,8 @@ export async function POST(request: Request) {
     console.error("Cümle oluşturma hatası:", error);
     return NextResponse.json(
       { error: "Cümle oluşturulurken bir hata oluştu" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}
+

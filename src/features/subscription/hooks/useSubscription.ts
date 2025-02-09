@@ -5,7 +5,9 @@ import { SubscriptionDetails, PLAN_FEATURES } from "../types";
 
 export const useSubscription = () => {
   const { user } = useAuth();
-  const [subscription, setSubscription] = useState<SubscriptionDetails | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionDetails | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +20,9 @@ export const useSubscription = () => {
       }
 
       try {
-        const details = await subscriptionService.getSubscriptionDetails(user.uid);
+        const details = await subscriptionService.getSubscriptionDetails(
+          user.uid,
+        );
         setSubscription(details);
       } catch (error) {
         console.error("Üyelik bilgileri yüklenirken hata:", error);
@@ -55,7 +59,9 @@ export const useSubscription = () => {
 
     try {
       await subscriptionService.upgradePlan(user.uid, newPlan);
-      const details = await subscriptionService.getSubscriptionDetails(user.uid);
+      const details = await subscriptionService.getSubscriptionDetails(
+        user.uid,
+      );
       setSubscription(details);
     } catch (error) {
       console.error("Plan yükseltme sırasında hata:", error);
@@ -71,4 +77,4 @@ export const useSubscription = () => {
     getRemainingUsage,
     upgradePlan,
   };
-}; 
+};

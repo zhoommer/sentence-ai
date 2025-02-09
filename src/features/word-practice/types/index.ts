@@ -10,4 +10,5 @@ export type AIResponse = {
   isCorrect: boolean;
   feedback: string;
   corrections?: string;
-}; 
+};
+

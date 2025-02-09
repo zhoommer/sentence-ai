@@ -4,13 +4,16 @@ import { SubscriptionDetails, SubscriptionPlan, PLAN_FEATURES } from "../types";
 
 export const subscriptionService = {
   // Üyelik detaylarını getir
-  getSubscriptionDetails: async (userId: string): Promise<SubscriptionDetails | null> => {
+  getSubscriptionDetails: async (
+    userId: string,
+  ): Promise<SubscriptionDetails | null> => {
     try {
       const docRef = doc(db, "subscriptions", userId);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = docSnap.data();
+
         return {
           ...data,
           startDate: data.startDate.toDate(),
@@ -47,7 +50,8 @@ export const subscriptionService = {
   // Kullanım sayısını artır ve limit kontrolü yap
   incrementUsageAndCheckLimit: async (userId: string): Promise<boolean> => {
     try {
-      const subscription = await subscriptionService.getSubscriptionDetails(userId);
+      const subscription =
+        await subscriptionService.getSubscriptionDetails(userId);
       if (!subscription) return false;
 
       // Premium plan için limit kontrolü yok
@@ -56,8 +60,9 @@ export const subscriptionService = {
       // Ay değiştiyse kullanımı sıfırla
       const now = new Date();
       const lastReset = subscription.lastResetDate;
-      const shouldReset = now.getMonth() !== lastReset.getMonth() || 
-                         now.getFullYear() !== lastReset.getFullYear();
+      const shouldReset =
+        now.getMonth() !== lastReset.getMonth() ||
+        now.getFullYear() !== lastReset.getFullYear();
 
       const docRef = doc(db, "subscriptions", userId);
       if (shouldReset) {
@@ -87,15 +92,20 @@ export const subscriptionService = {
   },
 
   // Plan yükseltme
-  upgradePlan: async (userId: string, newPlan: SubscriptionPlan): Promise<void> => {
+  upgradePlan: async (
+    userId: string,
+    newPlan: SubscriptionPlan,
+  ): Promise<void> => {
     try {
       const docRef = doc(db, "subscriptions", userId);
       const now = new Date();
-      
+
       await updateDoc(docRef, {
         plan: newPlan,
         startDate: Timestamp.fromDate(now),
-        endDate: Timestamp.fromDate(new Date(now.getFullYear() + 1, now.getMonth(), now.getDate())),
+        endDate: Timestamp.fromDate(
+          new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()),
+        ),
         isActive: true,
       });
     } catch (error) {
@@ -103,4 +113,4 @@ export const subscriptionService = {
       throw error;
     }
   },
-}; 
+};

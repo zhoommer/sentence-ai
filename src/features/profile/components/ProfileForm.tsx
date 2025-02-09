@@ -47,7 +47,11 @@ export const ProfileForm = () => {
   };
 
   const getRemainingUsage = () => {
-    if (!subscription || subscription?.currentUsage === undefined || subscription?.plan === undefined) {
+    if (
+      !subscription ||
+      subscription?.currentUsage === undefined ||
+      subscription?.plan === undefined
+    ) {
       return 0;
     }
     const usage = subscription.currentUsage;
@@ -104,11 +108,7 @@ export const ProfileForm = () => {
             )}
 
             {/* Kaydet Butonu */}
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full"
-            >
+            <Button type="submit" disabled={loading} className="w-full">
               {loading ? (
                 <span className="flex items-center gap-2">
                   <FaSpinner className="animate-spin" />
@@ -141,18 +141,20 @@ export const ProfileForm = () => {
             <div>
               <Label>Mevcut Plan</Label>
               <div className="flex items-center gap-2 mt-1">
-                <span className={`text-lg font-semibold ${
-                  subscription?.plan === "premium" 
-                    ? "text-purple-500" 
-                    : subscription?.plan === "basic" 
-                    ? "text-blue-500" 
-                    : "text-zinc-400"
-                }`}>
-                  {subscription?.plan === "premium" 
-                    ? "Premium" 
-                    : subscription?.plan === "basic" 
-                    ? "Basic" 
-                    : "Ücretsiz"}
+                <span
+                  className={`text-lg font-semibold ${
+                    subscription?.plan === "premium"
+                      ? "text-purple-500"
+                      : subscription?.plan === "basic"
+                        ? "text-blue-500"
+                        : "text-zinc-400"
+                  }`}
+                >
+                  {subscription?.plan === "premium"
+                    ? "Premium"
+                    : subscription?.plan === "basic"
+                      ? "Basic"
+                      : "Ücretsiz"}
                 </span>
                 {subscription?.plan === "premium" && (
                   <span className="px-2 py-0.5 text-xs bg-purple-500/10 text-purple-500 rounded-full">
@@ -166,7 +168,9 @@ export const ProfileForm = () => {
             <div>
               <Label>Başlangıç Tarihi</Label>
               <p className="text-zinc-400 mt-1">
-                {subscription?.startDate ? formatDate(subscription.startDate) : "-"}
+                {subscription?.startDate
+                  ? formatDate(subscription.startDate)
+                  : "-"}
               </p>
             </div>
 
@@ -188,17 +192,25 @@ export const ProfileForm = () => {
                       Kalan Pratik Hakkı
                     </span>
                     <span className="font-semibold">
-                      {getRemainingUsage()} / {subscription?.plan ? PLAN_FEATURES[subscription.plan].practiceLimit : 0}
+                      {getRemainingUsage()} /{" "}
+                      {subscription?.plan
+                        ? PLAN_FEATURES[subscription.plan].practiceLimit
+                        : 0}
                     </span>
                   </div>
                   <div className="w-full h-2 bg-[#222] rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-blue-500 rounded-full transition-all"
-                      style={{ 
+                      style={{
                         width: `${Math.min(
-                          subscription?.plan ? (getRemainingUsage() / PLAN_FEATURES[subscription.plan].practiceLimit) * 100 : 0,
-                          100
-                        )}%` 
+                          subscription?.plan
+                            ? (getRemainingUsage() /
+                                PLAN_FEATURES[subscription.plan]
+                                  .practiceLimit) *
+                                100
+                            : 0,
+                          100,
+                        )}%`,
                       }}
                     />
                   </div>
@@ -210,4 +222,5 @@ export const ProfileForm = () => {
       </div>
     </div>
   );
-}; 
+};
+

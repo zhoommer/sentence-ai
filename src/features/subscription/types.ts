@@ -48,4 +48,5 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, PlanLimits> = {
       "Reklamsız deneyim",
     ],
   },
-}; 
+};
+

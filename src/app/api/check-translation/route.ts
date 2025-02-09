@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_GENAI_API_KEY!);
+const genAI = new GoogleGenerativeAI(
+  process.env.NEXT_PUBLIC_GOOGLE_GENAI_API_KEY!,
+);
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +12,7 @@ export async function POST(request: Request) {
     if (!turkishSentence || !userTranslation) {
       return NextResponse.json(
         { error: "Türkçe cümle ve kullanıcı çevirisi zorunludur" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,11 +46,11 @@ or
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = response.text().trim();
-    
+
     try {
       // Yanıttan fazladan karakterleri temizle
       const cleanJson = text.replace(/```json\n|\n```|```/g, "").trim();
-      
+
       console.log("AI yanıtı:", cleanJson); // Debug için
 
       const data = JSON.parse(cleanJson);
@@ -56,25 +58,26 @@ or
       // Yanıt formatını kontrol et ve gerekirse düzelt
       const formattedResponse = {
         isCorrect: Boolean(data.isCorrect),
-        correctTranslation: String(data.correctTranslation || userTranslation)
+        correctTranslation: String(data.correctTranslation || userTranslation),
       };
 
       return NextResponse.json(formattedResponse);
     } catch (error) {
       console.error("JSON ayrıştırma hatası:", error);
       console.error("Ham yanıt:", text); // Debug için
-      
+
       // Varsayılan yanıt döndür
       return NextResponse.json({
         isCorrect: false,
-        correctTranslation: "Çeviri kontrol edilemedi. Lütfen tekrar deneyin."
+        correctTranslation: "Çeviri kontrol edilemedi. Lütfen tekrar deneyin.",
       });
     }
   } catch (error) {
     console.error("Çeviri kontrolü hatası:", error);
     return NextResponse.json(
       { error: "Çeviri kontrolü sırasında bir hata oluştu" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}
+

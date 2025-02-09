@@ -1,6 +1,9 @@
 "use client";
 
-import { createTurkishSentence, getWordList as getWordListFromGenkit } from "@/lib/genkit";
+import {
+  createTurkishSentence,
+  getWordList as getWordListFromGenkit,
+} from "@/lib/genkit";
 import { Word } from "../types";
 
 type UserLevel = "beginner" | "intermediate" | "advanced";
@@ -18,7 +21,10 @@ export const wordPracticeService = {
   },
 
   // Çeviri kontrolü
-  checkTranslation: async (turkishSentence: string, userTranslation: string) => {
+  checkTranslation: async (
+    turkishSentence: string,
+    userTranslation: string,
+  ) => {
     const response = await fetch("/api/check-translation", {
       method: "POST",
       headers: {
@@ -47,4 +53,5 @@ export const wordPracticeService = {
       throw new Error("Cümle oluşturulurken bir hata oluştu");
     }
   },
-}; 
+};
+

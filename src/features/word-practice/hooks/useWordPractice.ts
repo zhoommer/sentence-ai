@@ -5,6 +5,7 @@ import { wordPracticeService } from "../services/wordPracticeService";
 import { Word } from "../types";
 import { useAuth } from "@/lib/firebase/hooks/useAuth";
 import { statisticsService } from "@/features/statistics/services/statisticsService";
+import { subscriptionService } from "@/features/subscription/services/subscriptionService";
 
 type UserLevel = "beginner" | "intermediate" | "advanced";
 
@@ -38,22 +39,29 @@ export const useWordPractice = () => {
   }, []);
 
   // Filtreleme fonksiyonu
-  const filteredWords = words.filter(word => {
-    const matchesSearch = word.word.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesLevel = selectedFilter === "all" || word.level === selectedFilter;
-    const matchesCategory = selectedCategory === "all" || word.category === selectedCategory;
+  const filteredWords = words.filter((word) => {
+    const matchesSearch = word.word
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesLevel =
+      selectedFilter === "all" || word.level === selectedFilter;
+    const matchesCategory =
+      selectedCategory === "all" || word.category === selectedCategory;
     return matchesSearch && matchesLevel && matchesCategory;
   });
 
   // Benzersiz kategorileri ve seviyeleri al
-  const categories = ["all", ...new Set(words.map(word => word.category))];
-  const levels = ["all", ...new Set(words.map(word => word.level))];
+  const categories = ["all", ...new Set(words.map((word) => word.category))];
+  const levels = ["all", ...new Set(words.map((word) => word.level))];
 
   const generateSentence = async (word: string) => {
     setLoading(true);
     setError(null);
     try {
-      const sentence = await wordPracticeService.generateSentence(word, selectedLevel);
+      const sentence = await wordPracticeService.generateSentence(
+        word,
+        selectedLevel,
+      );
       setTurkishSentence(sentence);
       setSelectedWord(word);
       setUserTranslation("");
@@ -76,12 +84,16 @@ export const useWordPractice = () => {
     setError(null);
 
     try {
-      const result = await wordPracticeService.checkTranslation(turkishSentence, userTranslation);
+      const result = await wordPracticeService.checkTranslation(
+        turkishSentence,
+        userTranslation,
+      );
       setIsCorrect(result.isCorrect);
       setCorrectTranslation(result.correctTranslation);
 
       // Pratik sonucunu veritabanına kaydet
       if (user) {
+        await subscriptionService.incrementUsageAndCheckLimit(user.uid);
         await statisticsService.savePracticeResult(user.uid, {
           word: selectedWord,
           userLevel: selectedLevel,
@@ -132,4 +144,4 @@ export const useWordPractice = () => {
     checkTranslation,
     resetStates,
   };
-}; 
+};

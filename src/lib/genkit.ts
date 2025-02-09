@@ -3,12 +3,17 @@ import { Word } from "@/features/word-practice/types";
 
 type UserLevel = "beginner" | "intermediate" | "advanced";
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_GENAI_API_KEY!);
+const genAI = new GoogleGenerativeAI(
+  process.env.NEXT_PUBLIC_GOOGLE_GENAI_API_KEY!,
+);
 
 const levelDescriptions: Record<UserLevel, string> = {
-  beginner: "Basit, günlük hayattan, 5-7 kelimelik kısa cümleler. Temel fiil zamanları (şimdiki zaman, geniş zaman) kullanılmalı.",
-  intermediate: "8-10 kelimelik, birleşik cümleler. Daha karmaşık fiil zamanları (geçmiş zaman, gelecek zaman) kullanılabilir.",
-  advanced: "10-15 kelimelik, karmaşık yapıda cümleler. Tüm fiil zamanları, edilgen yapı ve dolaylı anlatım kullanılabilir.",
+  beginner:
+    "Basit, günlük hayattan, 5-7 kelimelik kısa cümleler. Temel fiil zamanları (şimdiki zaman, geniş zaman) kullanılmalı.",
+  intermediate:
+    "8-10 kelimelik, birleşik cümleler. Daha karmaşık fiil zamanları (geçmiş zaman, gelecek zaman) kullanılabilir.",
+  advanced:
+    "10-15 kelimelik, karmaşık yapıda cümleler. Tüm fiil zamanları, edilgen yapı ve dolaylı anlatım kullanılabilir.",
 };
 
 // Örnek kelime listesi
@@ -35,7 +40,10 @@ const wordList: Word[] = [
   { word: "innovation", level: "advanced", category: "technology" },
 ];
 
-export async function createTurkishSentence(word: string, userLevel: UserLevel): Promise<string> {
+export async function createTurkishSentence(
+  word: string,
+  userLevel: UserLevel,
+): Promise<string> {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
@@ -60,4 +68,5 @@ export async function getWordList(): Promise<Word[]> {
   // Şimdilik statik kelime listesini döndürüyoruz
   // İleride bu fonksiyon bir API'den veya veritabanından kelime listesini çekebilir
   return wordList;
-} 
+}
+
