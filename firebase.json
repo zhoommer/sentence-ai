@@ -20,14 +20,9 @@
       "enabled": true,
       "port": 4000
     },
-    "singleProjectMode": true
-  },
-  "hosting": {
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "nextjsApp"
-      }
-    ]
+    "singleProjectMode": true,
+    "hosting": {
+      "port": 5000
+    }
   }
 }
