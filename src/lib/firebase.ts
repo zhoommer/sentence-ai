@@ -20,7 +20,7 @@ const app = initializeApp(firebaseConfig);
 
 // Auth ve Firestore servislerini başlat
 const auth = getAuth();
-const db = getFirestore();
+const db = getFirestore(app);
 
 // Geliştirme ortamında emülatörleri kullan
 if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
