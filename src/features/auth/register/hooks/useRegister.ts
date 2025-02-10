@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { registerService } from "../services/registerService";
-import { userService } from "../../services/userService";
+import { profileService } from "@/features/profile/services/profileService";
 import Cookies from "js-cookie";
 
 export const useRegister = () => {
@@ -60,12 +60,19 @@ export const useRegister = () => {
         return;
       }
 
-      const result = await registerService.registerWithEmail(formData.email, formData.password);
+      const result = await registerService.registerWithEmail(
+        formData.email,
+        formData.password,
+      );
       const token = await registerService.getToken(result.user);
-      
+
       // Kullanıcı profilini oluştur
-      await userService.createUserProfile(result.user.uid, formData.email, formData.name);
-      
+      await profileService.createUserProfile(
+        result.user.uid,
+        formData.email,
+        formData.name,
+      );
+
       Cookies.set("token", token, { expires: 7 });
       router.refresh();
       router.push("/dashboard");
@@ -91,16 +98,16 @@ export const useRegister = () => {
       setError("");
       const result = await registerService.registerWithGoogle();
       const token = await registerService.getToken(result.user);
-      
+
       // Google ile giriş yapan kullanıcının profilini oluştur
       if (result.user.displayName) {
-        await userService.createUserProfile(
+        await profileService.createUserProfile(
           result.user.uid,
           result.user.email!,
-          result.user.displayName
+          result.user.displayName,
         );
       }
-      
+
       Cookies.set("token", token, { expires: 7 });
       router.refresh();
       router.push("/dashboard");
@@ -119,4 +126,5 @@ export const useRegister = () => {
     registerWithEmail,
     registerWithGoogle,
   };
-}; 
+};
+

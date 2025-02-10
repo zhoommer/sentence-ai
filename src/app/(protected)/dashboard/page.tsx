@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/firebase/hooks/useAuth";
-import { useProfile } from "@/features/auth/hooks/useProfile";
+import { useProfile } from "@/features/profile/hooks/useProfile";
 import { useRouter } from "next/navigation";
 import { AiOutlineBook, AiOutlineHistory, AiOutlineRise } from "react-icons/ai";
 import { FaSpinner } from "react-icons/fa";
@@ -44,7 +44,8 @@ export default function DashboardPage() {
           </div>
           <h3 className="text-xl font-bold mb-2">Kelime Pratiği</h3>
           <p className="text-zinc-400">
-            AI destekli çeviri alıştırmaları ile kelime dağarcığınızı geliştirin.
+            AI destekli çeviri alıştırmaları ile kelime dağarcığınızı
+            geliştirin.
           </p>
         </div>
 
@@ -78,4 +79,5 @@ export default function DashboardPage() {
       <Statistics />
     </div>
   );
-} 
+}
+

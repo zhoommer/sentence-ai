@@ -9,6 +9,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import Cookies from "js-cookie";
+import { loginService } from "../services/loginService";
 
 export const useLogin = () => {
   const [formData, setFormData] = useState({
@@ -37,7 +38,7 @@ export const useLogin = () => {
         formData.email,
         formData.password,
       );
-      const token = await result.user.getIdToken();
+      const token = await loginService.getToken(result.user);
       Cookies.set("token", token, { expires: formData.remember ? 7 : 1 });
       router.refresh();
       router.push("/dashboard");
@@ -89,4 +90,3 @@ export const useLogin = () => {
     loginWithGoogle,
   };
 };
-
