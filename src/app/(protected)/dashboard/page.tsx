@@ -37,7 +37,7 @@ export default function DashboardPage() {
         {/* Kelime Pratiği Kartı */}
         <div
           onClick={() => router.push("/practice")}
-          className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-[#333] transition-colors cursor-pointer group"
+          className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-blue-600/40 transition-colors cursor-pointer group"
         >
           <div className="w-12 h-12 bg-blue-600/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600/20 transition-colors">
             <AiOutlineBook className="text-2xl text-blue-500" />
@@ -50,7 +50,7 @@ export default function DashboardPage() {
         </div>
 
         {/* İlerleme Kartı */}
-        <div className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-[#333] transition-colors cursor-pointer group">
+        <div className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-green-600/40 transition-colors cursor-pointer group">
           <div className="w-12 h-12 bg-green-600/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-600/20 transition-colors">
             <AiOutlineRise className="text-2xl text-green-500" />
           </div>
@@ -63,7 +63,7 @@ export default function DashboardPage() {
         {/* Geçmiş Kartı */}
         <div
           onClick={() => router.push("/practice-history")}
-          className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-[#333] transition-colors cursor-pointer group"
+          className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-purple-600/40 transition-colors cursor-pointer group"
         >
           <div className="w-12 h-12 bg-purple-600/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-600/20 transition-colors">
             <AiOutlineHistory className="text-2xl text-purple-500" />
@@ -80,4 +80,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

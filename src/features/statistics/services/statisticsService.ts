@@ -19,7 +19,9 @@ export const statisticsService = {
   getUserStatistics: async (userId: string): Promise<UserStatistics | null> => {
     try {
       if (!isOnline()) {
-        console.warn("İnternet bağlantısı yok, çevrimdışı veriler kullanılıyor");
+        console.warn(
+          "İnternet bağlantısı yok, çevrimdışı veriler kullanılıyor",
+        );
       }
 
       const docRef = doc(db, "userStatistics", userId);
@@ -52,7 +54,10 @@ export const statisticsService = {
         return initialStats;
       }
     } catch (error: any) {
-      if (error?.code === 'failed-precondition' || error?.code === 'unavailable') {
+      if (
+        error?.code === "failed-precondition" ||
+        error?.code === "unavailable"
+      ) {
         console.warn("Çevrimdışı mod aktif değil veya bağlantı hatası");
       }
       throw error;
@@ -62,7 +67,7 @@ export const statisticsService = {
   // Pratik sonucunu kaydet
   savePracticeResult: async (
     userId: string,
-    practiceRecord: Omit<PracticeRecord, "timestamp">
+    practiceRecord: Omit<PracticeRecord, "timestamp">,
   ) => {
     console.log("savePracticeResult başladı:", { userId, practiceRecord });
 
@@ -88,7 +93,8 @@ export const statisticsService = {
         // İstatistikleri güncelle
         await updateDoc(docRef, {
           totalPractices: increment(1),
-          [practiceRecord.isCorrect ? "correctAnswers" : "wrongAnswers"]: increment(1),
+          [practiceRecord.isCorrect ? "correctAnswers" : "wrongAnswers"]:
+            increment(1),
           lastPracticeDate: Timestamp.fromDate(new Date()),
           practiceHistory: arrayUnion(record),
           ...(practiceRecord.isCorrect && {
@@ -118,7 +124,7 @@ export const statisticsService = {
         console.error("Hata detayları:", {
           message: error.message,
           name: error.name,
-          stack: error.stack
+          stack: error.stack,
         });
       }
       throw error;
@@ -140,7 +146,8 @@ export const statisticsService = {
         const lastPractice = data.lastPracticeDate;
         const today = new Date();
         const diffDays = Math.floor(
-          (today.getTime() - lastPractice.toDate().getTime()) / (1000 * 60 * 60 * 24)
+          (today.getTime() - lastPractice.toDate().getTime()) /
+            (1000 * 60 * 60 * 24),
         );
 
         let newStreak = data.practiceStreak;
@@ -161,4 +168,5 @@ export const statisticsService = {
       throw error;
     }
   },
-}; 
+};
+

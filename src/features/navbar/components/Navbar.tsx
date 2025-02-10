@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { AiOutlineUser, AiOutlineLogout, AiOutlineBook, AiOutlineDashboard } from "react-icons/ai";
+import {
+  AiOutlineUser,
+  AiOutlineLogout,
+  AiOutlineBook,
+  AiOutlineDashboard,
+} from "react-icons/ai";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useNavbar } from "../hooks/useNavbar";
@@ -11,15 +16,19 @@ export const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-        scrolled ? "bg-[#111]/80 backdrop-blur-md" : "bg-[#111]"
-      } border-b border-[#222]`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+          scrolled ? "bg-[#111]/80 backdrop-blur-md" : "bg-[#111]"
+        } border-b border-[#222]`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Sol taraf - Brand ve Navigation */}
             <div className="flex items-center gap-8">
               <Link href="/dashboard" className="flex items-center gap-2">
-                <span className="text-white font-bold text-xl">Sentese AI</span>
+                <span className="text-white font-bold text-xl">
+                  Sentense AI
+                </span>
               </Link>
 
               {/* Ana Navigasyon */}
@@ -143,4 +152,4 @@ export const Navbar = () => {
       <div className="h-16" />
     </>
   );
-}; 
+};

@@ -1,6 +1,9 @@
 export type SubscriptionPlan = "free" | "basic" | "premium";
 
 export interface PlanLimits {
+  plan: SubscriptionPlan;
+  description: string;
+  price: number;
   practiceLimit: number; // -1 for unlimited
   features: string[];
 }
@@ -16,6 +19,9 @@ export interface SubscriptionDetails {
 
 export const PLAN_FEATURES: Record<SubscriptionPlan, PlanLimits> = {
   free: {
+    plan: "free",
+    description: "İngilizce öğrenmeye başlamak için ideal",
+    price: 0,
     practiceLimit: 50,
     features: [
       "Aylık 50 pratik hakkı",
@@ -25,6 +31,9 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, PlanLimits> = {
     ],
   },
   basic: {
+    plan: "basic",
+    description: "Daha fazla pratik, daha hızlı öğrenme",
+    price: 199.99,
     practiceLimit: 200,
     features: [
       "Aylık 200 pratik hakkı",
@@ -36,6 +45,9 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, PlanLimits> = {
     ],
   },
   premium: {
+    plan: "premium",
+    description: "Sınırsız pratik, maksimum verim",
+    price: 499.99,
     practiceLimit: -1, // Sınırsız
     features: [
       "Sınırsız pratik hakkı",
@@ -49,4 +61,3 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, PlanLimits> = {
     ],
   },
 };
-
