@@ -4,4 +4,4 @@ export interface UserProfile {
   displayName: string;
   createdAt: Date;
   updatedAt: Date;
-} 
+}

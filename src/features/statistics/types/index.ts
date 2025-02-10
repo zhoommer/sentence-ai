@@ -19,4 +19,3 @@ export interface PracticeRecord {
   correctTranslation?: string;
   timestamp: Timestamp;
 }
-

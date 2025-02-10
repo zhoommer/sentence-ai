@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/firebase/hooks/useAuth";
-import { useProfile } from "@/features/auth/hooks/useProfile";
-import { userService } from "@/features/auth/services/userService";
+import { useProfile } from "./useProfile";
+import { profileService } from "../services/profileService";
 
 export const useProfileForm = () => {
   const { user } = useAuth();
@@ -18,7 +18,7 @@ export const useProfileForm = () => {
     setSuccess(false);
 
     try {
-      await userService.updateUserProfile(user.uid, {
+      await profileService.updateUserProfile(user.uid, {
         displayName,
       });
       setSuccess(true);
@@ -37,4 +37,4 @@ export const useProfileForm = () => {
     success,
     updateProfile,
   };
-}; 
+};

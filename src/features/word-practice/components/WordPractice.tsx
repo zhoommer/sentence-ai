@@ -6,7 +6,13 @@ import Input from "@/components/ui/input";
 import Card from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { ChangeEvent } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const WordPractice = () => {
   const {
@@ -18,7 +24,6 @@ export const WordPractice = () => {
     selectedWord,
     userTranslation,
     selectedLevel,
-    words,
     filteredWords,
     categories,
     levels,
@@ -39,11 +44,17 @@ export const WordPractice = () => {
   const getLevelColor = (level: string) => {
     switch (level) {
       case "beginner":
-        return selectedLevel === level ? "bg-green-600 hover:bg-green-700" : "border-green-600/20 hover:border-green-600/40";
+        return selectedLevel === level
+          ? "bg-green-600 hover:bg-green-700"
+          : "border-green-600/20 hover:border-green-600/40";
       case "intermediate":
-        return selectedLevel === level ? "bg-yellow-600 hover:bg-yellow-700" : "border-yellow-600/20 hover:border-yellow-600/40";
+        return selectedLevel === level
+          ? "bg-yellow-600 hover:bg-yellow-700"
+          : "border-yellow-600/20 hover:border-yellow-600/40";
       case "advanced":
-        return selectedLevel === level ? "bg-red-600 hover:bg-red-700" : "border-red-600/20 hover:border-red-600/40";
+        return selectedLevel === level
+          ? "bg-red-600 hover:bg-red-700"
+          : "border-red-600/20 hover:border-red-600/40";
       default:
         return "";
     }
@@ -57,17 +68,23 @@ export const WordPractice = () => {
         <div className="space-y-4">
           {/* Zorluk Seviyesi */}
           <div>
-            <label className="block text-sm font-medium mb-2">Zorluk Seviyesi</label>
+            <label className="block text-sm font-medium mb-2">
+              Zorluk Seviyesi
+            </label>
             <div className="flex gap-2">
               {[
                 { id: "beginner", label: "Kolay" },
                 { id: "intermediate", label: "Orta" },
-                { id: "advanced", label: "Zor" }
+                { id: "advanced", label: "Zor" },
               ].map((level) => (
                 <Button
                   key={level.id}
                   variant={selectedLevel === level.id ? "primary" : "outline"}
-                  onClick={() => setSelectedLevel(level.id as "beginner" | "intermediate" | "advanced")}
+                  onClick={() =>
+                    setSelectedLevel(
+                      level.id as "beginner" | "intermediate" | "advanced",
+                    )
+                  }
                   className={`flex-1 ${getLevelColor(level.id)}`}
                 >
                   {level.label}
@@ -79,11 +96,15 @@ export const WordPractice = () => {
           {/* Arama ve Filtreler */}
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium mb-2">Kelime Ara</label>
+              <label className="block text-sm font-medium mb-2">
+                Kelime Ara
+              </label>
               <Input
                 type="text"
                 value={searchQuery}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(e.target.value)
+                }
                 placeholder="Kelime ara..."
               />
             </div>
@@ -106,7 +127,10 @@ export const WordPractice = () => {
 
             <div className="w-full md:w-48">
               <label className="block text-sm font-medium mb-2">Kategori</label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Kategori seç" />
                 </SelectTrigger>
@@ -148,7 +172,7 @@ export const WordPractice = () => {
       {/* Cümle Oluşturma ve Çeviri */}
       <Card className="p-4">
         <h2 className="text-xl font-semibold mb-4">Cümle Pratiği</h2>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
@@ -158,15 +182,23 @@ export const WordPractice = () => {
         {selectedWord && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Türkçe Cümle</label>
-              <p className="p-3 bg-[#222] rounded-lg">{turkishSentence || "Cümle oluşturuluyor..."}</p>
+              <label className="block text-sm font-medium mb-2">
+                Türkçe Cümle
+              </label>
+              <p className="p-3 bg-[#222] rounded-lg">
+                {turkishSentence || "Cümle oluşturuluyor..."}
+              </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">İngilizce Çeviri</label>
+              <label className="block text-sm font-medium mb-2">
+                İngilizce Çeviri
+              </label>
               <Input
                 value={userTranslation}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setUserTranslation(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setUserTranslation(e.target.value)
+                }
                 placeholder="Çevirinizi buraya yazın..."
                 disabled={loading || !turkishSentence}
               />
@@ -203,13 +235,17 @@ export const WordPractice = () => {
             </div>
 
             {isCorrect !== null && (
-              <div className={`p-4 rounded-lg ${isCorrect ? "bg-green-100" : "bg-red-100"}`}>
+              <div
+                className={`p-4 rounded-lg ${isCorrect ? "bg-green-100" : "bg-red-100"}`}
+              >
                 {isCorrect ? (
                   <p className="text-green-700">Tebrikler! Çeviriniz doğru.</p>
                 ) : (
                   <div className="space-y-2">
                     <p className="text-red-700">Üzgünüm, çeviriniz yanlış.</p>
-                    <p className="text-gray-700">Doğru çeviri: {correctTranslation}</p>
+                    <p className="text-gray-700">
+                      Doğru çeviri: {correctTranslation}
+                    </p>
                   </div>
                 )}
               </div>
@@ -219,4 +255,5 @@ export const WordPractice = () => {
       </Card>
     </div>
   );
-}; 
+};
+

@@ -26,11 +26,15 @@ export const usePracticeHistory = () => {
           setStats(userStats);
           setFilteredHistory(userStats.practiceHistory.slice().reverse());
         } else {
-          setError("Pratik geçmişi yüklenemedi. Lütfen internet bağlantınızı kontrol edin.");
+          setError(
+            "Pratik geçmişi yüklenemedi. Lütfen internet bağlantınızı kontrol edin.",
+          );
         }
       } catch (error) {
         console.error("Pratik geçmişi yüklenirken hata:", error);
-        setError("Pratik geçmişi yüklenirken bir hata oluştu. Lütfen tekrar deneyin.");
+        setError(
+          "Pratik geçmişi yüklenirken bir hata oluştu. Lütfen tekrar deneyin.",
+        );
       } finally {
         setLoading(false);
       }
@@ -47,10 +51,10 @@ export const usePracticeHistory = () => {
     const filtered = stats.practiceHistory
       .slice()
       .reverse()
-      .filter(practice => 
-        practice.word.toLowerCase().includes(term.toLowerCase())
+      .filter((practice) =>
+        practice.word.toLowerCase().includes(term.toLowerCase()),
       );
-    
+
     setFilteredHistory(filtered);
   };
 
@@ -60,6 +64,7 @@ export const usePracticeHistory = () => {
     error,
     hasPractices: Boolean(stats?.practiceHistory.length),
     searchTerm,
-    handleSearch
+    handleSearch,
   };
-}; 
+};
+

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/firebase/hooks/useAuth";
-import { userService } from "../services/userService";
+import { profileService } from "../services/profileService";
 import { UserProfile } from "../types";
 
 export const useProfile = () => {
@@ -17,7 +17,7 @@ export const useProfile = () => {
       }
 
       try {
-        const userProfile = await userService.getUserProfile(user.uid);
+        const userProfile = await profileService.getUserProfile(user.uid);
         setProfile(userProfile);
       } catch (error) {
         console.error("Profil yüklenirken hata:", error);
@@ -30,4 +30,4 @@ export const useProfile = () => {
   }, [user]);
 
   return { profile, loading };
-}; 
+};

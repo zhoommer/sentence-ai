@@ -1,8 +1,8 @@
 import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc, updateDoc, Timestamp } from "firebase/firestore";
-import { UserProfile } from "../types";
+import { UserProfile } from "@/features/profile/types";
 
-export const userService = {
+export const profileService = {
   // Kullanıcı profilini getir
   getUserProfile: async (uid: string): Promise<UserProfile | null> => {
     try {
@@ -21,7 +21,11 @@ export const userService = {
   },
 
   // Yeni kullanıcı profili oluştur
-  createUserProfile: async (uid: string, email: string, displayName: string): Promise<void> => {
+  createUserProfile: async (
+    uid: string,
+    email: string,
+    displayName: string,
+  ): Promise<void> => {
     try {
       const docRef = doc(db, "users", uid);
       const now = Timestamp.now();
@@ -42,7 +46,10 @@ export const userService = {
   },
 
   // Kullanıcı profilini güncelle
-  updateUserProfile: async (uid: string, data: Partial<UserProfile>): Promise<void> => {
+  updateUserProfile: async (
+    uid: string,
+    data: Partial<UserProfile>,
+  ): Promise<void> => {
     try {
       const docRef = doc(db, "users", uid);
       const now = Timestamp.now();
@@ -56,4 +63,4 @@ export const userService = {
       throw error;
     }
   },
-}; 
+};

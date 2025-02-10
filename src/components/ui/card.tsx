@@ -10,14 +10,15 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={cn(
           "bg-[#111] rounded-xl border border-[#222] hover:border-[#333] transition-colors",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 
 Card.displayName = "Card";
 
-export default Card; 
+export default Card;
+
