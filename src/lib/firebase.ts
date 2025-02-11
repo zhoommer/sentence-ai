@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
@@ -21,7 +20,6 @@ const firebaseConfig = {
 
 // Firebase app'i başlat
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 // Auth ve Firestore servislerini başlat
 const auth = getAuth();
@@ -48,4 +46,4 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
   );
 }
 
-export { auth, db, analytics };
+export { auth, db };
