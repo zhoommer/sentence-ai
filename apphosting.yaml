@@ -23,7 +23,6 @@ env:
     secret: webapp-firebase-app-id
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     secret: webapp-firebase-measurement-id
-
 # Environment variables and secrets.
 # env:
 # Configure environment variables.
