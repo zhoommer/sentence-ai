@@ -1,10 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
-import {
-  getFirestore,
-  enableIndexedDbPersistence,
-  connectFirestoreEmulator,
-} from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -41,21 +37,6 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
   console.log(
     "Firebase emülatörleri devre dışı, production ortamına bağlanılıyor",
   );
-}
-
-// Çevrimdışı desteğini etkinleştir
-if (process.env.NODE_ENV === "production") {
-  enableIndexedDbPersistence(db)
-    .then(() => console.log("Çevrimdışı depolama etkinleştirildi"))
-    .catch((err) => {
-      if (err.code === "failed-precondition") {
-        console.warn(
-          "Çoklu sekme açık olduğu için çevrimdışı depolama etkinleştirilemedi",
-        );
-      } else if (err.code === "unimplemented") {
-        console.warn("Tarayıcınız çevrimdışı depolamayı desteklemiyor");
-      }
-    });
 }
 
 export { auth, db };
