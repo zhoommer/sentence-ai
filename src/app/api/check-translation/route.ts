@@ -48,14 +48,10 @@ or
     const text = response.text().trim();
 
     try {
-      // Yanıttan fazladan karakterleri temizle
       const cleanJson = text.replace(/```json\n|\n```|```/g, "").trim();
-
-      console.log("AI yanıtı:", cleanJson); // Debug için
 
       const data = JSON.parse(cleanJson);
 
-      // Yanıt formatını kontrol et ve gerekirse düzelt
       const formattedResponse = {
         isCorrect: Boolean(data.isCorrect),
         correctTranslation: String(data.correctTranslation || userTranslation),
@@ -66,7 +62,6 @@ or
       console.error("JSON ayrıştırma hatası:", error);
       console.error("Ham yanıt:", text); // Debug için
 
-      // Varsayılan yanıt döndür
       return NextResponse.json({
         isCorrect: false,
         correctTranslation: "Çeviri kontrol edilemedi. Lütfen tekrar deneyin.",
@@ -80,4 +75,3 @@ or
     );
   }
 }
-

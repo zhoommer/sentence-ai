@@ -23,15 +23,13 @@ export const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Sol taraf - Brand ve Navigation */}
             <div className="flex items-center gap-8">
               <Link href="/dashboard" className="flex items-center gap-2">
                 <span className="text-white font-bold text-xl">
-                  Sentense AI
+                  Sentence AI
                 </span>
               </Link>
 
-              {/* Ana Navigasyon */}
               {user && (
                 <div className="hidden md:flex items-center gap-4">
                   <Link
@@ -148,7 +146,6 @@ export const Navbar = () => {
           </div>
         </div>
       </nav>
-      {/* Navbar'ın yüksekliği kadar boşluk bırak */}
       <div className="h-16" />
     </>
   );

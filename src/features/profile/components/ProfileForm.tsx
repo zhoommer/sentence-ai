@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { useProfileForm } from "../hooks/useProfileForm";
 import { useSubscription } from "@/features/subscription/hooks/useSubscription";
+import { useRouter } from "next/navigation";
 import { PLAN_FEATURES } from "@/features/subscription/types";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import Label from "@/components/ui/label";
 import Card from "@/components/ui/card";
 import { FaSpinner } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 
 export const ProfileForm = () => {
   const { profile, loading, error, success, updateProfile } = useProfileForm();
@@ -63,23 +63,20 @@ export const ProfileForm = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Profil Bilgileri */}
         <Card className="p-6">
           <h2 className="text-2xl font-bold mb-6">Profil Bilgileri</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email (salt okunur) */}
             <div>
               <Label>Email</Label>
               <Input
                 type="email"
                 value={profile?.email || ""}
                 disabled
-                className="bg-[#1a1a1a]"
+                className="bg-[#1a1a1a] cursor-not-allowed"
               />
             </div>
 
-            {/* Ad Soyad */}
             <div>
               <Label>Ad Soyad</Label>
               <Input
@@ -91,14 +88,12 @@ export const ProfileForm = () => {
               />
             </div>
 
-            {/* Hata Mesajı */}
             {error && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                 <p className="text-red-500 text-sm">{error}</p>
               </div>
             )}
 
-            {/* Başarı Mesajı */}
             {success && (
               <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                 <p className="text-green-500 text-sm">
@@ -107,7 +102,6 @@ export const ProfileForm = () => {
               </div>
             )}
 
-            {/* Kaydet Butonu */}
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -121,7 +115,6 @@ export const ProfileForm = () => {
           </form>
         </Card>
 
-        {/* Üyelik Bilgileri */}
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Üyelik Bilgileri</h2>
@@ -137,12 +130,11 @@ export const ProfileForm = () => {
           </div>
 
           <div className="space-y-4">
-            {/* Mevcut Plan */}
             <div>
-              <Label>Mevcut Plan</Label>
+              <Label className="font-bold text-lg underline">Mevcut Plan</Label>
               <div className="flex items-center gap-2 mt-1">
                 <span
-                  className={`text-lg font-semibold ${
+                  className={`text-sm  ${
                     subscription?.plan === "premium"
                       ? "text-purple-500"
                       : subscription?.plan === "basic"
@@ -164,25 +156,26 @@ export const ProfileForm = () => {
               </div>
             </div>
 
-            {/* Başlangıç Tarihi */}
             <div>
-              <Label>Başlangıç Tarihi</Label>
-              <p className="text-zinc-400 mt-1">
+              <Label className="text-lg font-bold underline">
+                Başlangıç Tarihi
+              </Label>
+              <p className="text-zinc-400 text-sm mt-1">
                 {subscription?.startDate
                   ? formatDate(subscription.startDate)
                   : "-"}
               </p>
             </div>
 
-            {/* Bitiş Tarihi */}
             <div>
-              <Label>Bitiş Tarihi</Label>
-              <p className="text-zinc-400 mt-1">
+              <Label className="text-lg font-bold underline">
+                Bitiş Tarihi
+              </Label>
+              <p className="text-zinc-400 mt-1 text-sm">
                 {subscription?.endDate ? formatDate(subscription.endDate) : "-"}
               </p>
             </div>
 
-            {/* Kullanım Durumu */}
             {subscription?.plan !== "premium" && (
               <div>
                 <Label>Bu Ayki Kullanım</Label>
@@ -223,4 +216,3 @@ export const ProfileForm = () => {
     </div>
   );
 };
-

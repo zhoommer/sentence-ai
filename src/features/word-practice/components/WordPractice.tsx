@@ -1,6 +1,7 @@
 "use client";
 
 import { useWordPractice } from "../hooks/useWordPractice";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import Card from "@/components/ui/card";
@@ -62,14 +63,19 @@ export const WordPractice = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Kelime Seçimi ve Zorluk Seviyesi */}
       <Card className="p-4">
         <h2 className="text-xl font-semibold mb-4">Kelime Seçimi</h2>
         <div className="space-y-4">
-          {/* Zorluk Seviyesi */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium mb-2  w-max relative">
               Zorluk Seviyesi
+              <span className="relative group -top-2 right-2">
+                <AiOutlineInfoCircle className="inline-block ml-2 text-gray-500 cursor-pointer" />
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-2 bg-gray-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+                  Yapay zeka, seçtiğiniz zorluk seviyesine uygun olarak sizin
+                  için cümleler oluşturur.
+                </span>
+              </span>
             </label>
             <div className="flex gap-2">
               {[
@@ -93,7 +99,6 @@ export const WordPractice = () => {
             </div>
           </div>
 
-          {/* Arama ve Filtreler */}
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium mb-2">
@@ -116,9 +121,10 @@ export const WordPractice = () => {
                   <SelectValue placeholder="Seviye seç" />
                 </SelectTrigger>
                 <SelectContent>
-                  {levels.map((level) => (
-                    <SelectItem key={level} value={level}>
-                      {level === "all" ? "Tümü" : level}
+                  <SelectItem value={"all"}>Tümü</SelectItem>
+                  {levels.map((level, index) => (
+                    <SelectItem key={index} value={level.value}>
+                      {level.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -145,12 +151,11 @@ export const WordPractice = () => {
             </div>
           </div>
 
-          {/* Kelime Listesi */}
           <div className="h-[400px] overflow-y-auto border border-zinc-800 rounded-lg p-4 custom-scrollbar">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {filteredWords.map((word) => (
+              {filteredWords.map((word, index) => (
                 <button
-                  key={word.word}
+                  key={index}
                   onClick={() => {
                     setSelectedWord(word.word);
                     generateSentence(word.word);
@@ -256,4 +261,3 @@ export const WordPractice = () => {
     </div>
   );
 };
-

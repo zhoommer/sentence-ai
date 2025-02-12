@@ -24,7 +24,6 @@ export const useWordPractice = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
-  // Kelime listesini yükle
   useEffect(() => {
     const loadWords = async () => {
       try {
@@ -50,9 +49,12 @@ export const useWordPractice = () => {
     return matchesSearch && matchesLevel && matchesCategory;
   });
 
-  // Benzersiz kategorileri ve seviyeleri al
   const categories = ["all", ...new Set(words.map((word) => word.category))];
-  const levels = ["all", ...new Set(words.map((word) => word.level))];
+  const levels: { label: string; value: UserLevel }[] = [
+    { label: "Başlangıç", value: "beginner" },
+    { label: "Orta", value: "intermediate" },
+    { label: "Gelişmiş", value: "advanced" },
+  ];
 
   const generateSentence = async (word: string) => {
     setLoading(true);

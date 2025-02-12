@@ -22,7 +22,6 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto py-8 px-6">
-      {/* Hoş Geldin Mesajı */}
       <div className="mb-12">
         <h1 className="text-3xl font-bold mb-2">
           Hoş Geldin, {profile?.displayName || user?.email?.split("@")[0]}!
@@ -32,9 +31,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Ana Kartlar */}
       <div className="grid md:grid-cols-3 gap-6 mb-12">
-        {/* Kelime Pratiği Kartı */}
         <div
           onClick={() => router.push("/practice")}
           className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-blue-600/40 transition-colors cursor-pointer group"
@@ -49,7 +46,6 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* İlerleme Kartı */}
         <div className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-green-600/40 transition-colors cursor-pointer group">
           <div className="w-12 h-12 bg-green-600/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-600/20 transition-colors">
             <AiOutlineRise className="text-2xl text-green-500" />
@@ -60,7 +56,6 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Geçmiş Kartı */}
         <div
           onClick={() => router.push("/practice-history")}
           className="bg-[#111] p-6 rounded-2xl border border-[#222] hover:border-purple-600/40 transition-colors cursor-pointer group"
@@ -75,7 +70,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* İstatistikler */}
       <Statistics />
     </div>
   );

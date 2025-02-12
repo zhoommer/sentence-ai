@@ -35,7 +35,7 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
     console.log("Firebase Auth emülatörü bağlandı: localhost:9099");
 
     // Firestore emülatörünü bağla
-    connectFirestoreEmulator(db, "localhost", 8081);
+    connectFirestoreEmulator(db, "localhost", 8080);
     console.log("Firebase Firestore emülatörü bağlandı: localhost:8081");
   } catch (err) {
     console.error("Firebase emülatör bağlantı hatası:", err);
