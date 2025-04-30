@@ -22,7 +22,7 @@ export async function createTurkishSentence(
   userLevel: UserLevel,
 ): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini20FlashExp" });
 
     const prompt = `Sen bir dil öğretmenisin. Sana verilen İngilizce kelimeyi kullanarak Türkçe bir cümle oluştur.
     Cümle ${userLevel} seviyesinde olmalı.
